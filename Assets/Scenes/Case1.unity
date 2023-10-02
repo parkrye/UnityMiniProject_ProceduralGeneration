@@ -170,6 +170,7 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 3113825506580501256, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
   RoomPrefab: {fileID: 3650621399097380312, guid: 0f1e712f4694ada499c07057b150e7e3, type: 3}
   RoadPrefab: {fileID: 7011966038500456490, guid: 81a28ca634cd76e44a9e80e6c14eb0a0, type: 3}
-  width: 10
-  height: 10
-  depth: 1
+  StairPrefab: {fileID: 3650621399097380312, guid: 0b66be4c74efd0f49bc09e9916c740b7, type: 3}
+  width: 20
+  height: 20
+  depth: 3
