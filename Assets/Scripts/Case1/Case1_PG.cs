@@ -7,7 +7,7 @@ namespace Case1
 
     public class Case1_PG : MonoBehaviour
     {
-        class Structure
+        public class Structure
         {
             public int d, x, y, a;
             public StructureType t;
@@ -31,7 +31,8 @@ namespace Case1
             }
         }
 
-        [SerializeField] GameObject PlayerPrefab, RoomPrefab, StairPrefab;
+        [SerializeField] Case1_PL PlayerPrefab;
+        [SerializeField] GameObject RoomPrefab, StairPrefab, backGroundPrefab;
         [SerializeField] int size, depth;
 
         Structure[,,] map;
@@ -39,6 +40,9 @@ namespace Case1
         List<Structure> roomList;
         List<List<Structure>> areaList;
         List<(int x, int y)> areaCenter;
+
+        public int Size { get { return size; } }
+        public Structure[,,] Map { get { return map; } }
 
         void Awake()
         {
@@ -67,6 +71,9 @@ namespace Case1
 
             // 2차 방 연결
             AdditialRoadSetting();
+
+            // 계단 설정
+            StairSetting();
 
             // 프리팹 생성
             InstantiateObjects();
@@ -178,7 +185,8 @@ namespace Case1
                     while (merge.Count > 0)
                     {
                         Structure pop = merge.Pop();
-                        pop.t = StructureType.Room;
+                        if(pop.t == StructureType.None)
+                            pop.t = StructureType.Room;
                         roomList.Add(pop);
                         area.Add(pop);
                         if (pop.a >= 0)
@@ -213,7 +221,7 @@ namespace Case1
         void AdditialRoadSetting()
         {
             int totalXDifferenceSum = 0, totalYDifferenceSum = 0;
-            float totalXDifference = 0f, totalYDifference = 0f;
+            float totalXDifference = 1f, totalYDifference = 1f;
             for(int i = 0; i < areaCenter.Count; i++)
             {
                 totalXDifferenceSum += areaCenter[i].x;
@@ -307,37 +315,44 @@ namespace Case1
                 if (findMerge)
                 {
                     List<Structure> area = new List<Structure>();
-                    int thisAreaNum = -1;
                     while (merge.Count > 0)
                     {
                         Structure pop = merge.Pop();
-                        pop.t = StructureType.Room;
+                        if(pop.t == StructureType.None)
+                            pop.t = StructureType.Room;
                         roomList.Add(pop);
                         area.Add(pop);
-                        if (pop.a >= 0)
-                            thisAreaNum = pop.a;
                     }
 
-                    if (thisAreaNum >= 0)
+                    for (int j = 0; j < area.Count; j++)
                     {
-                        for (int j = 0; j < area.Count; j++)
-                        {
-                            if (area[j].a >= 0)
-                                continue;
-                            area[j].a = thisAreaNum;
-                            areaList[thisAreaNum].Add(area[j]);
-                        }
-                    }
-                    else
-                    {
-                        for (int j = 0; j < area.Count; j++)
-                        {
-                            area[j].a = areaNum;
-                        }
-                        areaNum++;
-                        areaList.Add(area);
+                        if (area[j].a >= 0)
+                            continue;
+                        area[j].a = baseAreaIndex;
+                        areaList[baseAreaIndex].Add(area[j]);
                     }
                 }
+            }
+        }
+
+        void StairSetting()
+        {
+            for(int d = 0; d < depth - 1; d++)
+            {
+                bool done = false;
+                do
+                {
+                    int x = Random.Range(0, size);
+                    int y = Random.Range(0, size);
+                    if (map[d, x, y] != null && map[d + 1, x, y] != null &&
+                        map[d, x, y].t == StructureType.Room && map[d + 1, x, y].t == StructureType.Room)
+                    {
+                        map[d, x, y].t = StructureType.Stair;
+                        map[d + 1, x, y].t = StructureType.Stair;
+                        done = true;
+                    }
+                }
+                while (!done);
             }
         }
 
@@ -345,7 +360,8 @@ namespace Case1
         {
             for(int d = 0; d < depth; d++)
             {
-                for(int x = 0; x < size; x++)
+                Instantiate(backGroundPrefab, new Vector3(size >> 1, size >> 1, d * -5 + 1), Quaternion.identity, transform).transform.localScale *= size * 2;
+                for (int x = 0; x < size; x++)
                 {
                     for(int y = 0; y < size; y++)
                     {
@@ -354,15 +370,19 @@ namespace Case1
                         switch(map[d, x, y].t)
                         {
                             case StructureType.Room:
-                                Instantiate(RoomPrefab, new Vector2(x, y + size * 2 * d), Quaternion.identity, transform);
+                                Instantiate(RoomPrefab, new Vector3(x, y, d * -5), Quaternion.identity, transform);
                                 break;
                             case StructureType.Stair:
-                                Instantiate(StairPrefab, new Vector2(x, y + size * 2 * d), Quaternion.identity, transform);
+                                Instantiate(StairPrefab, new Vector3(x, y, d * -5), Quaternion.identity, transform);
                                 break;
                         }
                     }
                 }
             }
+
+            int playerSpawn = Random.Range(0, roomList.Count);
+            Case1_PL player = Instantiate(PlayerPrefab, new Vector3(roomList[playerSpawn].x, roomList[playerSpawn].y, roomList[playerSpawn].d * -5 - 1), Quaternion.identity);
+            player.Initialize(this, (roomList[playerSpawn].d, roomList[playerSpawn].x, roomList[playerSpawn].y));
         }
     }
 

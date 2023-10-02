@@ -167,9 +167,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7331fb539416d854a9f95259683e4e36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 3113825506580501256, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
+  PlayerPrefab: {fileID: -182179130413973582, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
   RoomPrefab: {fileID: 3650621399097380312, guid: 0f1e712f4694ada499c07057b150e7e3, type: 3}
   StairPrefab: {fileID: 3650621399097380312, guid: 0b66be4c74efd0f49bc09e9916c740b7, type: 3}
-  size: 20
-  depth: 3
-  roomSize: 2
+  backGroundPrefab: {fileID: 399536488648068318, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
+  size: 40
+  depth: 5
