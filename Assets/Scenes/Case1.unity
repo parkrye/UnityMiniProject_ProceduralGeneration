@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1442033951}
+  - component: {fileID: 1442033952}
   m_Layer: 0
   m_Name: Case1
   m_TagString: Untagged
@@ -154,3 +155,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1442033952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442033950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7331fb539416d854a9f95259683e4e36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerPrefab: {fileID: 3113825506580501256, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
+  RoomPrefab: {fileID: 3650621399097380312, guid: 0f1e712f4694ada499c07057b150e7e3, type: 3}
+  RoadPrefab: {fileID: 7011966038500456490, guid: 81a28ca634cd76e44a9e80e6c14eb0a0, type: 3}
+  width: 10
+  height: 10
+  depth: 1

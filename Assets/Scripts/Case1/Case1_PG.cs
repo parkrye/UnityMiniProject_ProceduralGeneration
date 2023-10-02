@@ -18,7 +18,7 @@ namespace Case1
             if(height < 10) height = 10;
             if(depth < 1) depth = 1;
 
-            roomCount = (width * height) << 3;
+            roomCount = (width * height) >> 3;
 
             map = new int[width, height, depth];
             roomList = new List<(int, int, int)> ();
@@ -44,7 +44,6 @@ namespace Case1
             Stack<(int, int, int, int)> roomStack = new Stack<(int, int, int, int)>();
             roomStack.Push((0, width, 0, height));
 
-            // ※ 무한루프 발생! 문제 해결 요망
             while (roomStack.Count > 0 && count < limit)
             {
                 (int xLow, int xHigh, int yLow, int yHigh) = roomStack.Pop();
@@ -68,6 +67,7 @@ namespace Case1
                     map[nextX, nextY, depth] = 2;
                     roomList.Add((nextX, nextY, depth));
                     count++;
+                    Debug.Log($"{roomList.Count}: {nextX}, {nextY}, {depth}");
                 }
             }
         }
