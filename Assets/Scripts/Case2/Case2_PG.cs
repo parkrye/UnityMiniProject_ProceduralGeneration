@@ -154,6 +154,8 @@ namespace Case2
                 // 다른축 값이 n.5라면
                 // n, n+1은 room
                 
+                // 최소신장트리 사용 가능?!
+
                 return;
             }
 
