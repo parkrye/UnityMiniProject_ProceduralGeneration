@@ -123,71 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &521222467
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 994941009}
-    m_Modifications:
-    - target: {fileID: 399536488648068318, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_Name
-      value: BackGround (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2704672232484230321, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 85e35d95c767aa8499638e91d0b06a98, type: 3}
 --- !u!114 &994941007 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4219941924887815245, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
@@ -199,11 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e61dff72d2dc54d9b714ccdca82684, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &994941009 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1852796950228549268, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
-  m_PrefabInstance: {fileID: 1124631644}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1124631644
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -217,7 +147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1852796950228549268, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1852796950228549268, guid: dc4104a1f5e8c6d4299a5a1dab5c745e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -294,7 +224,7 @@ MonoBehaviour:
   RoadPrefab: {fileID: 3650621399097380312, guid: ff3a31efb9ee642498fe18b932e1e5cf, type: 3}
   StairPrefab: {fileID: 3650621399097380312, guid: 0b66be4c74efd0f49bc09e9916c740b7, type: 3}
   player: {fileID: 994941007}
-  depth: 1
+  depth: 2
   size: 100
   quantity: 5
   maxRoomSize: 200

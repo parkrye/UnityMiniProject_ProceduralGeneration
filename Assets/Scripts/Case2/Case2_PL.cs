@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 namespace Case2
 {
     public class Case2_PL : MonoBehaviour
     {
+        [SerializeField] Camera cam;
         Case2_PG pg;
         (int d, int x, int y) pos;
+        bool camMode;
 
         public void Initialize(Case2_PG _pg, (int d, int x, int y) _pos)
         {
             pg = _pg;
             pos = _pos;
+            camMode = false;
         }
 
         void Update()
@@ -85,6 +85,14 @@ namespace Case2
                         }
                     }
                 }
+            }
+            else if(Input.GetKeyDown(KeyCode.Space))
+            {
+                if (camMode)
+                    cam.orthographicSize = 5;
+                else
+                    cam.orthographicSize = 50;
+                camMode = !camMode;
             }
         }
     }
