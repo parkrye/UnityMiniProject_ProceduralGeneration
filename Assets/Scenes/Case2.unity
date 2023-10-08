@@ -157,8 +157,8 @@ MonoBehaviour:
   StairPrefab: {fileID: 3650621399097380312, guid: 0b66be4c74efd0f49bc09e9916c740b7, type: 3}
   depth: 1
   size: 100
-  quantity: 6
-  maxRoomSize: 100
+  quantity: 5
+  maxRoomSize: 150
 --- !u!4 &1151105654
 Transform:
   m_ObjectHideFlags: 0
