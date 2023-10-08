@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,16 +22,11 @@ namespace Case2
             type = _type;
         }
 
-        public int GetAbsDistance(Structure other)
+        public int GetDistance(Structure other)
         {
             int xDiff = position.x - other.position.x < 0 ? other.position.x - position.x : position.x - other.position.x;
             int yDiff = position.y - other.position.y < 0 ? other.position.y - position.y : position.y - other.position.y;
             return xDiff + yDiff;
-        }
-
-        public int GetDistance(Structure other)
-        {
-            return other.position.x - position.x + other.position.y - position.y;
         }
     }
 
@@ -68,10 +62,12 @@ namespace Case2
     public class Case2_PG : MonoBehaviour
     {
         [SerializeField] GameObject RoomPrefab, RoadPrefab, StairPrefab;
+        [SerializeField] Case2_PL player;
 
         Structure[,,] map;
         PGNode[] roots;
         public Structure[,,] Map { get { return map; } }
+        public int Size { get { return size; } }
 
         [SerializeField][Range(1, 10)] int depth;
         [SerializeField][Range(100, 200)] int size;
@@ -85,7 +81,7 @@ namespace Case2
             map = new Structure[depth, size, size];
             roots = new PGNode[depth];
 
-            calcQuantity = maxRoomSize - maxRoomSize * quantity * 0.1f;
+            calcQuantity = maxRoomSize - maxRoomSize * quantity >> 3;
             areaCount = 0;
         }
 
@@ -98,12 +94,13 @@ namespace Case2
         {
             for(int deep = 0; deep < depth; deep++)
             {
+                areaCount = 0;
                 roots[deep] = new PGNode();
                 RoomGenerate(deep, 0, size, 0, size, roots[deep]);
                 RoadGenerate(deep);
+                if(deep > 0)
+                    StairGenerate(deep);
             }
-
-            StairGenerate();
 
             CreateMap();
         }
@@ -150,7 +147,7 @@ namespace Case2
         {
             PGNode now = roots[deep];
             List<PGNode> area = new List<PGNode>(areaCount);
-            Queue<PGNode> findQueue = new Queue<PGNode>(areaCount * 2);
+            Queue<PGNode> findQueue = new Queue<PGNode>(areaCount << 1);
 
             findQueue.Enqueue(now);
 
@@ -179,24 +176,36 @@ namespace Case2
                 Structure currentCenterRoom = area[i].CenterRoom;
                 for (int j = i + 1; j < areaCount; j++)
                 {
-                    table[i, j] = currentCenterRoom.GetAbsDistance(area[j].CenterRoom);
+                    table[i, j] = currentCenterRoom.GetDistance(area[j].CenterRoom);
                 }
             }
 
             // 최소 거리 간선 연결
+            bool[,] visit = new bool[areaCount, areaCount];
             for (int i = 0; i < areaCount; i++)
             {
                 (int x, int y) currentRoomPosition = area[i].CenterRoom.Position;
                 int minDistance = int.MaxValue;
                 int minDistanceIndex = 0;
-                for (int j = i + 1; j < areaCount; j++)
+                for (int j = 0; j < areaCount; j++)
                 {
-                    if (table[i, j] < minDistance)
+                    if (i != j && !visit[i, j] && !visit[j, i] && table[i, j] < minDistance)
                     {
-                        minDistance = table[i, j];
-                        minDistanceIndex = j;
+                        if(i < j)
+                        {
+                            minDistance = table[i, j];
+                            minDistanceIndex = j;
+                        }
+                        else
+                        {
+                            minDistance = table[j, i];
+                            minDistanceIndex = j;
+                        }
                     }
                 }
+
+                visit[i, minDistanceIndex] = true;
+                visit[minDistanceIndex, i] = true;
                 (int x, int y) minDistanceRoomPosition = area[minDistanceIndex].CenterRoom.Position;
                 int xDiff = minDistanceRoomPosition.x - currentRoomPosition.x;
                 int yDiff = minDistanceRoomPosition.y - currentRoomPosition.y;
@@ -205,32 +214,62 @@ namespace Case2
 
                 if(xDiff != 0 && yDiff != 0)
                 {
-                    float grad = yDiff / xDiff;
-                    for(int x = 0; x != xDiff; x += xModifier)
+                    float grad = 1f;
+                    if ((xDiff < 0 ? -xDiff : xDiff) >= (yDiff < 0 ? -yDiff : yDiff))
                     {
-                        if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y] == null)
-                            map[deep, currentRoomPosition.x + x, currentRoomPosition.y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y), StructureType.Room);
-                        for(int y = 0; y < grad && y > -grad && y >= 0 && y < size; y += yModifier)
+                        grad = yDiff / xDiff;
+                        for (int x = 0; x != xDiff; x += xModifier)
                         {
-                            if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] == null)
-                                map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y + y), StructureType.Room);
+                            if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y] == null)
+                                map[deep, currentRoomPosition.x + x, currentRoomPosition.y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y), StructureType.Road);
+                            else if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y].Type == StructureType.Road)
+                                break;
+                            for (int y = 0; y != (int)grad + yModifier && currentRoomPosition.y + y >= 0 && currentRoomPosition.y + y < size; y += yModifier)
+                            {
+                                if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] == null)
+                                    map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y + y), StructureType.Road);
+                                else if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y].Type == StructureType.Road)
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        grad = xDiff / yDiff;
+                        for (int y = 0; y != yDiff; y += yModifier)
+                        {
+                            if (map[deep, currentRoomPosition.x, currentRoomPosition.y + y] == null)
+                                map[deep, currentRoomPosition.x, currentRoomPosition.y + y] = new Structure(deep, (currentRoomPosition.x, currentRoomPosition.y + y), StructureType.Road);
+                            else if (map[deep, currentRoomPosition.x, currentRoomPosition.y + y].Type == StructureType.Road)
+                                break;
+                            for (int x = 0; x != (int)grad + xModifier && currentRoomPosition.x + x >= 0 && currentRoomPosition.x + x < size; x += xModifier)
+                            {
+                                if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] == null)
+                                    map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y + y), StructureType.Road);
+                                else if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y + y].Type == StructureType.Road)
+                                    break;
+                            }
                         }
                     }
                 }
                 else if(xDiff == 0 && yDiff != 0)
                 {
-                    for (int y = currentRoomPosition.y; y < minDistanceRoomPosition.y && y > -minDistanceRoomPosition.y; y += yModifier)
+                    for (int y = 0; y != yDiff; y += yModifier)
                     {
-                        if (map[deep, currentRoomPosition.x, y] == null)
-                            map[deep, currentRoomPosition.x, y] = new Structure(deep, (currentRoomPosition.x, y), StructureType.Room);
+                        if (map[deep, currentRoomPosition.x, currentRoomPosition.y + y] == null)
+                            map[deep, currentRoomPosition.x, currentRoomPosition.y + y] = new Structure(deep, (currentRoomPosition.x, currentRoomPosition.y + y), StructureType.Road);
+                        else if (map[deep, currentRoomPosition.x, currentRoomPosition.y + y].Type == StructureType.Road)
+                            break;
                     }
                 }
-                else if(yDiff == 0)
+                else if(xDiff != 0 && yDiff == 0)
                 {
-                    for(int x = currentRoomPosition.x; x < minDistanceRoomPosition.x && x > -minDistanceRoomPosition.x; x += xModifier)
+                    for(int x = 0; x != xDiff; x += xModifier)
                     {
-                        if (map[deep, x, currentRoomPosition.y] == null)
-                            map[deep, x, currentRoomPosition.y] = new Structure(deep, (x, currentRoomPosition.y), StructureType.Room);
+                        if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y] == null)
+                            map[deep, currentRoomPosition.x + x, currentRoomPosition.y] = new Structure(deep, (currentRoomPosition.x + x, currentRoomPosition.y), StructureType.Road);
+                        else if (map[deep, currentRoomPosition.x + x, currentRoomPosition.y].Type == StructureType.Road)
+                            break;
                     }
                 }
                 else
@@ -240,9 +279,17 @@ namespace Case2
             }
         }
 
-        void StairGenerate()
+        void StairGenerate(int deep)
         {
+            int x, y;
+            do
+            {
+                x = Random.Range(0, Size);
+                y = Random.Range(0, Size);
+            } while (map[deep - 1, x, y] == null || map[deep, x, y] == null);
 
+            map[deep - 1, x, y].Type = StructureType.Stair;
+            map[deep, x, y].Type = StructureType.Stair;
         }
 
         void CreateMap()
@@ -262,18 +309,28 @@ namespace Case2
                             case StructureType.None:
                                 break;
                             case StructureType.Room:
-                                Instantiate(RoomPrefab, new Vector2(xi, yi), Quaternion.identity, transform);
+                                Instantiate(RoomPrefab, new Vector3(xi, yi, deep * -5), Quaternion.identity, transform);
                                 break;
                             case StructureType.Road:
-                                Instantiate(RoadPrefab, new Vector2(xi, yi), Quaternion.identity, transform);
+                                Instantiate(RoadPrefab, new Vector3(xi, yi, deep * -5), Quaternion.identity, transform);
                                 break;
                             case StructureType.Stair:
-                                Instantiate(StairPrefab, new Vector2(xi, yi), Quaternion.identity, transform);
+                                Instantiate(StairPrefab, new Vector3(xi, yi, deep * -5), Quaternion.identity, transform);
                                 break;
                         }
                     }
                 }
             }
+
+            (int deep, int x, int y) playerPosition = (0, 0, 0);
+            playerPosition.deep = Random.Range(0, depth);
+            do
+            {
+                playerPosition.x = Random.Range(0, size);
+                playerPosition.y = Random.Range(0, size);
+            } while (map[playerPosition.deep, playerPosition.x, playerPosition.y] == null);
+            player.transform.position = new Vector3(playerPosition.x, playerPosition.y, playerPosition.deep * -5);
+            player.Initialize(this, playerPosition);
         }
 
         int GetArea(int x1, int x2, int y1, int y2)
